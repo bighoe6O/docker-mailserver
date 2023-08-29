@@ -1,11 +1,11 @@
 services:
   mailserver:
-    image: docker.io/mailserver/docker-mailserver:latest
+    image: docker.io/mailserver/docker-mailserver:11.3.1
     container_name: mailserver
     # If the FQDN for your mail-server is only two labels (eg: example.com),
     # you can assign this entirely to `hostname` and remove `domainname`.
     hostname: mail
-    domainname: example.com
+    domainname: fpa052023.site
     env_file: mailserver.env
     # More information about the mail-server ports:
     # https://docker-mailserver.github.io/docker-mailserver/edge/config/security/understanding-the-ports/
@@ -22,6 +22,9 @@ services:
       - ./docker-data/dms/mail-logs/:/var/log/mail/
       - ./docker-data/dms/config/:/tmp/docker-mailserver/
       - /etc/localtime:/etc/localtime:ro
+      # - ./work/etc/aliases:/etc/aliases:ro
+    networks:
+      - net
     restart: always
     stop_grace_period: 1m
     cap_add:
@@ -30,3 +33,6 @@ services:
       test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
       timeout: 3s
       retries: 0
+networks:
+  net:
+    external: true
